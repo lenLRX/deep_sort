@@ -197,9 +197,15 @@ def main():
     with tf.Session(graph=tf.Graph()) as session:
         input_var = tf.placeholder(
             tf.uint8, (None, 128, 64, 3), name="images")
+        """
         image_var = tf.map_fn(
             lambda x: _preprocess(x), tf.cast(input_var, tf.float32),
             back_prop=False)
+        """
+        # input should be RGB
+        # ATC cmd:
+        # atc --mode=0 --framework=3  --output=deepsort_mars --model=freeze_model.pb --soc_version=Ascend310 --out_nodes="features:0" --input_shape="images:1,128,64,3"
+        image_var = tf.cast(input_var, tf.float32)
 
         factory_fn = _network_factory()
         features, _ = factory_fn(image_var, reuse=None)
